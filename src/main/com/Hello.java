@@ -1,4 +1,4 @@
-package main.controller;
+package main.com;
 
 
 import org.springframework.boot.SpringApplication;
