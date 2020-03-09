@@ -1,29 +1,28 @@
 package main.com.services;
 
+import main.com.intefaces.FileServiceImp;
+import org.apache.log4j.Logger;
+
 import java.io.File;
 
-public interface FileService {
+public class FileService implements FileServiceImp {
+    final Logger log = Logger.getLogger(FileService.class);
+    private final File file;
+    public FileService(File file) {
+        this.file = file;
+    }
 
-    /**
-     * upload a file
-     * @param file the file needs to upload
-     * @return true for upload successfully, false for failed to upload
-     */
-    public boolean upload(File file);
+    public boolean upload(File file) {
+        return true;
+    }
 
 
-    /**
-     * download a file
-     * @param file the file needs to download
-     * @return true for download the file successfully, false for failed to download the file
-     */
-    public boolean download(File file);
+    public boolean download(File file) {
+        return true;
+    }
 
-    /**
-     * convert a file into specific form
-     * @param file the file needs to convert
-     * @return true for convert successfully, false for failed to convert the file
-     */
-    public boolean convert(File file, String form);
 
+    public boolean convert(File file, String form) {
+        return true;
+    }
 }

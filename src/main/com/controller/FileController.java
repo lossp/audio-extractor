@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
-public class File {
+public class FileController {
     @PostMapping(value = "/upload" , headers = "content-type=multipart/form-data")
     @ApiOperation(value = "File upload", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public boolean upload(@ApiParam(value = "file", required = true) MultipartFile file) {
