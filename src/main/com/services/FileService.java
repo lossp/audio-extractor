@@ -1,12 +1,10 @@
 package main.com.services;
 
-import main.com.entity.FtpEntity;
 import main.com.intefaces.FileServiceImp;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +14,9 @@ public class FileService implements FileServiceImp {
     final Logger log = Logger.getLogger(FileService.class);
 
     /**
-     * The essential params for FileService
+     * The essential params for FileService, it basically defines the specific actions of upload
+     * first opening a ftp client, then checking the directory, saving the file at the end. Throw Exceptions if any of it occurs
+     * the host, port, username, password, basePath, filePath is passed in by the entity ftpEntity.
      */
     private final String host;
     private final int port;
@@ -35,7 +35,13 @@ public class FileService implements FileServiceImp {
         this.fileName = fileName;
     }
 
+    /**
+     * the achievement of uploading.
+     * @param inputStream the file stream needs to upload
+     * @return boolean
+     */
     public boolean upload(InputStream inputStream) {
+        // TODO this part can be done better
         log.info("FileService.upload entry");
         String temp = "";
         // create ftp client every time when it comes to uploading
@@ -69,8 +75,6 @@ public class FileService implements FileServiceImp {
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             if (!ftpClient.storeFile(fileName, inputStream)) return false;
             inputStream.close();
-            System.out.println("------------------->>>>>");
-            System.out.println(temp);
             ftpClient.logout();
         } catch (IOException e) {
             e.printStackTrace();

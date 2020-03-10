@@ -8,10 +8,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-
+/**
+ * The class defines the action of uploading
+ * it call the upload service to do the uploading, the base path and filename is done in this part
+ */
 public class FileUploader {
     private final static Logger log = Logger.getLogger(FileUploader.class);
 
+    /**
+     * A static method, it initializes a new file service every-time when it`s called. So there`s a one to one relation between fileService and uploading action
+     * @param multipartFile the file uploaded
+     * @param ftpEntity the configuration entity
+     * @return boolean
+     */
     public static boolean upload(MultipartFile multipartFile, FtpEntity ftpEntity) {
         log.info("FileUploader.upload entry");
         try {

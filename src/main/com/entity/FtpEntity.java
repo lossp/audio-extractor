@@ -5,6 +5,13 @@ import org.springframework.stereotype.Component;
 
 /**
  * Entity represents the ftp connect
+ * it mainly reads the configuration from the application.properties and initialize a case with the value it reads.
+ * host is the FTP host
+ * port is the FTP port
+ * username is the FTP required username
+ * password is the FTP required password
+ * baseUrl is the path the file saved
+ * httpUrl is not used at the moment
  */
 @Component
 @ConfigurationProperties(prefix = "spring.ftp")
