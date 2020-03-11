@@ -3,12 +3,11 @@ package main.com.services;
 import main.com.intefaces.FileServiceImp;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 public class FileService implements FileServiceImp {
     final Logger log = Logger.getLogger(FileService.class);
@@ -18,6 +17,7 @@ public class FileService implements FileServiceImp {
      * first opening a ftp client, then checking the directory, saving the file at the end. Throw Exceptions if any of it occurs
      * the host, port, username, password, basePath, filePath is passed in by the entity ftpEntity.
      */
+    private final String protocal;
     private final String host;
     private final int port;
     private final String username;
@@ -25,7 +25,8 @@ public class FileService implements FileServiceImp {
     private final String basePath;
     private final String filePath;
     private final String fileName;
-    public FileService(String host, int port, String username, String password, String basePath, String filePath, String fileName) {
+    public FileService(String protocal, String host, int port, String username, String password, String basePath, String filePath, String fileName) {
+        this.protocal = protocal;
         this.host = host;
         this.port = port;
         this.username = username;
@@ -93,8 +94,37 @@ public class FileService implements FileServiceImp {
     }
 
 
-    public boolean download(File file) {
-        return true;
+    public boolean download(String savingPath) {
+        log.info("FileService.download Entering");
+        FTPClient ftpClient = new FTPClient();
+        boolean result = false;
+        try {
+            ftpClient.connect(host, port);
+            ftpClient.login(username, password);
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+            ftpClient.changeWorkingDirectory("/Desktop");
+            ftpClient.enterLocalPassiveMode();
+
+            FTPFile[] files = ftpClient.listFiles();
+            for (FTPFile file:files) {
+                System.out.println("+++++ " + new String(file.getName().getBytes("UTF-8"), FTP.DEFAULT_CONTROL_ENCODING));
+                if (file.getName().equals(fileName)) {
+                    File downFile = new File(savingPath + File.separator + file.getName());
+                    System.out.println("===" + savingPath + File.separator + file.getName());
+                    OutputStream outputStream = new FileOutputStream(downFile);
+                    result = ftpClient.retrieveFile(new String(file.getName().getBytes("UTF-8"), "ISO-8859-1"), outputStream);
+                    outputStream.flush();
+                    outputStream.close();
+                }
+            }
+            System.out.println("fileName" + fileName);
+            System.out.println("savingPath" + savingPath);
+            return result;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 

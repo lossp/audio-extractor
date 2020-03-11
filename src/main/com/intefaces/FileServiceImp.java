@@ -17,11 +17,11 @@ public interface FileServiceImp {
 
     /**
      * download a file
-     * @param file the file needs to download
+     * @param savingPath the file saving path
      * @return true for download the file successfully, false for failed to download the file
      * @Exception IOException
      */
-    public boolean download(File file) throws IOException;
+    public boolean download(String savingPath) throws IOException;
 
     /**
      * convert a file into specific form
