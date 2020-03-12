@@ -1,12 +1,12 @@
 package main.com.services;
 
-import main.com.entity.DownloadEntity;
 import main.com.intefaces.FileServiceImp;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
@@ -102,19 +102,21 @@ public class FileService implements FileServiceImp {
     public String download(String fileName, HttpServletResponse response) {
         log.info("FileService.download Entering");
         File file = new File(basePath, fileName);
-        File file1 = new File(basePath);
         System.out.println("base path = " + basePath);
         System.out.println("fileName = " + fileName);
-        System.out.println("basePath is a directory " + file1.isDirectory());
         System.out.println("file is a file " + file.getPath());
-
+        String copiedFileName = fileName;
+        String[] params = copiedFileName.split("\\.");
+        System.out.println(params.toString());
+        System.out.println("=============[0] " + params[0]);
+        System.out.println("=============[1] " + params[1]);
         if (file.exists()) {
-            response.setContentType("application/force-download");
-            response.addHeader("Content-Disposition", "attachment;fileName=" + fileName);
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[1024 * 8];
             FileInputStream fileInputStream = null;
             BufferedInputStream bufferedInputStream = null;
             try {
+                response.setContentType("application/force-download");
+                response.setHeader("Content-Disposition", "attachment;filename=" + params[0]);
                 fileInputStream = new FileInputStream(file);
                 bufferedInputStream = new BufferedInputStream(fileInputStream);
                 OutputStream outputStream = response.getOutputStream();
@@ -122,9 +124,21 @@ public class FileService implements FileServiceImp {
                 while ((index = bufferedInputStream.read(buffer)) != -1) {
                     outputStream.write(buffer, 0, index);
                 }
+                outputStream.flush();
                 System.out.println("download success");
             } catch (Exception exception) {
                 exception.printStackTrace();
+            } finally {
+                try {
+                    if (fileInputStream != null) {
+                        fileInputStream.close();
+                    }
+                    if (bufferedInputStream !=null) {
+                        bufferedInputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             System.out.println("没有匹配成功");

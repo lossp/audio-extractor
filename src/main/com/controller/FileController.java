@@ -10,11 +10,10 @@ import main.com.entity.FtpEntity;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -47,8 +46,10 @@ public class FileController {
     @PostMapping(value = "/download")
     @ApiOperation(value = "File download")
     public String download(@RequestParam("fileName") String fileName, HttpServletResponse response) {
+
         log.info("FileController.download method Entry, file is ready to download");
         return FileDownloader.download(fileName, response, downloadEntity);
     }
 
 }
+
