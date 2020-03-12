@@ -1,5 +1,6 @@
 package main.com.intefaces;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,11 +18,12 @@ public interface FileServiceImp {
 
     /**
      * download a file
-     * @param savingPath the file saving path
-     * @return true for download the file successfully, false for failed to download the file
+     * @param fileName the file needs to be download
+     * @param response http response
+     * @return return a string
      * @Exception IOException
      */
-    public boolean download(String savingPath) throws IOException;
+    public String download(String fileName, HttpServletResponse response) throws IOException;
 
     /**
      * convert a file into specific form

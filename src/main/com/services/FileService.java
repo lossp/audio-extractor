@@ -1,12 +1,13 @@
 package main.com.services;
 
+import main.com.entity.DownloadEntity;
 import main.com.intefaces.FileServiceImp;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
 public class FileService implements FileServiceImp {
@@ -17,7 +18,7 @@ public class FileService implements FileServiceImp {
      * first opening a ftp client, then checking the directory, saving the file at the end. Throw Exceptions if any of it occurs
      * the host, port, username, password, basePath, filePath is passed in by the entity ftpEntity.
      */
-    private final String protocal;
+    private final String protocol;
     private final String host;
     private final int port;
     private final String username;
@@ -25,8 +26,8 @@ public class FileService implements FileServiceImp {
     private final String basePath;
     private final String filePath;
     private final String fileName;
-    public FileService(String protocal, String host, int port, String username, String password, String basePath, String filePath, String fileName) {
-        this.protocal = protocal;
+    public FileService(String protocol, String host, int port, String username, String password, String basePath, String filePath, String fileName) {
+        this.protocol = protocol;
         this.host = host;
         this.port = port;
         this.username = username;
@@ -34,6 +35,10 @@ public class FileService implements FileServiceImp {
         this.basePath = basePath;
         this.filePath = filePath;
         this.fileName = fileName;
+    }
+
+    public FileService(String fileName, String basePath) {
+        this("http", "", 0, "", "", basePath, "", fileName);
     }
 
     /**
@@ -94,37 +99,37 @@ public class FileService implements FileServiceImp {
     }
 
 
-    public boolean download(String savingPath) {
+    public String download(String fileName, HttpServletResponse response) {
         log.info("FileService.download Entering");
-        FTPClient ftpClient = new FTPClient();
-        boolean result = false;
-        try {
-            ftpClient.connect(host, port);
-            ftpClient.login(username, password);
-            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-            ftpClient.changeWorkingDirectory("/Desktop");
-            ftpClient.enterLocalPassiveMode();
+        File file = new File(basePath, fileName);
+        File file1 = new File(basePath);
+        System.out.println("base path = " + basePath);
+        System.out.println("fileName = " + fileName);
+        System.out.println("basePath is a directory " + file1.isDirectory());
+        System.out.println("file is a file " + file.getPath());
 
-            FTPFile[] files = ftpClient.listFiles();
-            for (FTPFile file:files) {
-                System.out.println("+++++ " + new String(file.getName().getBytes("UTF-8"), FTP.DEFAULT_CONTROL_ENCODING));
-                if (file.getName().equals(fileName)) {
-                    File downFile = new File(savingPath + File.separator + file.getName());
-                    System.out.println("===" + savingPath + File.separator + file.getName());
-                    OutputStream outputStream = new FileOutputStream(downFile);
-                    result = ftpClient.retrieveFile(new String(file.getName().getBytes("UTF-8"), "ISO-8859-1"), outputStream);
-                    outputStream.flush();
-                    outputStream.close();
+        if (file.exists()) {
+            response.setContentType("application/force-download");
+            response.addHeader("Content-Disposition", "attachment;fileName=" + fileName);
+            byte[] buffer = new byte[1024];
+            FileInputStream fileInputStream = null;
+            BufferedInputStream bufferedInputStream = null;
+            try {
+                fileInputStream = new FileInputStream(file);
+                bufferedInputStream = new BufferedInputStream(fileInputStream);
+                OutputStream outputStream = response.getOutputStream();
+                int index = 0;
+                while ((index = bufferedInputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, index);
                 }
+                System.out.println("download success");
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
-            System.out.println("fileName" + fileName);
-            System.out.println("savingPath" + savingPath);
-            return result;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+        } else {
+            System.out.println("没有匹配成功");
         }
+        return null;
     }
 
 
