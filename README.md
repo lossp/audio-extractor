@@ -22,7 +22,21 @@ Combining it with MySql seems to be quite handy. MyBatis is considerated, for a 
 
 ### File Downloading
 
-…wait to be done
+At the beginning, I used FTP as means to download specific files in the server. But I found that I have to run the application locally to make connection to the FTP server. Of course, we have to connect the FTP server through server`s port 21.
+
+In order to download the file from a regular Browser, I replaced ftp by http. More of it, on the frame of Spring boot, I specific the download direction in the application.properties, where the application can located the file. if a file is located by name, a download procedure is initilized.
+
+First, it will set the response`s header. Then FileInput and FileOutput comes later.
+
+There is one thing we have pay attention to. If we read a file contains chinese character, the content of the file will somehow display error codes. Therefore, we have to specific about the charset at the headers, `GBK` or `UTF-8` will solve this.
+
+Another problem comes up that if the file is way to large, downloading process can be done. But when it comes to open it, it cannot be open. As far as i know at  the moment, the reason why the file is cannot be open is that file was written somewhere wrong, I cannot solve this problem at the moment. If you know the solution to this problem, your any modification will be welcomed.
+
+PS: `.txt` is working, `img` and `mkv` is not working(by reading it)
+
+PSS: the file always downloaded in a wired name, and not in the file type it should be. Anyone can help here?
+
+
 
 ### File Converting
 
