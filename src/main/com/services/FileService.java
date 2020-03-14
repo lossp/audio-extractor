@@ -115,8 +115,8 @@ public class FileService implements FileServiceImp {
             FileInputStream fileInputStream = null;
             BufferedInputStream bufferedInputStream = null;
             try {
-                response.setContentType("application/force-download");
-                response.setHeader("Content-Disposition", "attachment;filename=" + params[0]);
+                response.setContentType("application/octet-stream;charset=UTF-8");
+                response.setHeader("Content-Disposition", "attachment;filename=" + params[0] + "." + params[1]);
                 fileInputStream = new FileInputStream(file);
                 bufferedInputStream = new BufferedInputStream(fileInputStream);
                 OutputStream outputStream = response.getOutputStream();

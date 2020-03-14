@@ -17,6 +17,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 
 
 /**
@@ -43,9 +44,10 @@ public class FileController {
         return FileUploader.upload(file, ftpEntity);
     }
 
-    @PostMapping(value = "/download")
-    @ApiOperation(value = "File download")
-    public String download(@RequestParam("fileName") String fileName, HttpServletResponse response) {
+    @RequestMapping(method = RequestMethod.GET, value = "/download")
+
+    @ApiOperation(value = "File download", produces="application/octet-stream")
+    public String download(@RequestParam(name = "fileName") String fileName, HttpServletResponse response) {
 
         log.info("FileController.download method Entry, file is ready to download");
         return FileDownloader.download(fileName, response, downloadEntity);

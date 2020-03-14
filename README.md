@@ -36,6 +36,8 @@ PS: `.txt` is working, `img` and `mkv` is not working(by reading it)
 
 PSS: the file always downloaded in a wired name, and not in the file type it should be. Anyone can help here?
 
+Solution to PSS, the reason a file is downloaded in a weird name and double the size, it`s because the Swagger2-UI, if we go through this by normal http request, the file will be downloaded in right name and proper size
+
 
 
 ### File Converting
