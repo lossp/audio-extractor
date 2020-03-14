@@ -1,5 +1,6 @@
 package main.com.services;
 
+import main.com.constants.VideoForm;
 import main.com.intefaces.FileServiceImp;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -11,7 +12,7 @@ import java.io.*;
 
 public class FileService implements FileServiceImp {
     final Logger log = Logger.getLogger(FileService.class);
-
+    private static final String VIDEO_FILE_NAME_PATTERN = "([^\\\\s]+(\\\\.(?i)(mkv|avi|3gp|mp4|mpeg|flv|mov|webm|rmvb|rm))$)";
     /**
      * The essential params for FileService, it basically defines the specific actions of upload
      * first opening a ftp client, then checking the directory, saving the file at the end. Throw Exceptions if any of it occurs
@@ -98,6 +99,12 @@ public class FileService implements FileServiceImp {
     }
 
 
+    /**
+     * the achievement of downloading
+     * @param fileName the file`s name, the file`s format is included
+     * @param response http response
+     * @return
+     */
     public String download(String fileName, HttpServletResponse response) {
         log.info("FileService.download Entering");
         File file = new File(basePath, fileName);
@@ -107,8 +114,6 @@ public class FileService implements FileServiceImp {
         String copiedFileName = fileName;
         String[] params = copiedFileName.split("\\.");
         System.out.println(params.toString());
-        System.out.println("=============[0] " + params[0]);
-        System.out.println("=============[1] " + params[1]);
         if (file.exists()) {
             byte[] buffer = new byte[1024 * 8];
             FileInputStream fileInputStream = null;
@@ -146,7 +151,25 @@ public class FileService implements FileServiceImp {
     }
 
 
-    public boolean convert(File file, String form) {
+    /**
+     * convert the file into specific form, the main idea of this is that use ffmpeg to convert the video
+     * @param fileName the file needs to convert
+     * @param form
+     * @return
+     */
+    public boolean convert(String fileName, String form) {
+        log.info("FileService.convert method entry");
+        // TODO first of, check the file is video or not
+
+        // check the file name`s correctness;
+        if (!fileName.matches(VIDEO_FILE_NAME_PATTERN)) throw new IllegalArgumentException("file name is incorrect, please check the file name contains a name and a format");
+
+        // check the file format is allowed
+        String copiedFileName = fileName;
+        String fileFormat = copiedFileName.split(".")[1];
+        if (!VideoForm.contains(fileFormat)) throw new IllegalArgumentException("file format is not supported, sorry");
+
+
         return true;
     }
 }

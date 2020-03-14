@@ -27,9 +27,9 @@ public interface FileServiceImp {
 
     /**
      * convert a file into specific form
-     * @param file the file needs to convert
+     * @param fileName file name
      * @return true for convert successfully, false for failed to convert the file
      */
-    public boolean convert(File file, String form);
+    public boolean convert(String fileName, String form);
 
 }
