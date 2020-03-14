@@ -40,6 +40,13 @@ Solution to PSS, the reason a file is downloaded in a weird name and double the 
 
 
 
+
+
 ### File Converting
 
-…wait to be done
+Converting file into the specific format requires a third-party module written in C, is ffmpeg.
+
+In order to call ffmpeg, JNI(Java Native Interface) is required. Therefore,  calling ffmpeg at command line, which can be achieved by running java`s Runtime class.  That is the main idea of this little feature
+
+
+
