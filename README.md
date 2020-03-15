@@ -32,9 +32,9 @@ There is one thing we have pay attention to. If we read a file contains chinese 
 
 Another problem comes up that if the file is way to large, downloading process can be done. But when it comes to open it, it cannot be open. As far as i know at  the moment, the reason why the file is cannot be open is that file was written somewhere wrong, I cannot solve this problem at the moment. If you know the solution to this problem, your any modification will be welcomed.
 
-PS: `.txt` is working, `img` and `mkv` is not working(by reading it)
+~~PS: `.txt` is working, `img` and `mkv` is not working(by reading it)~~
 
-PSS: the file always downloaded in a wired name, and not in the file type it should be. Anyone can help here?
+~~PSS: the file always downloaded in a wired name, and not in the file type it should be. Anyone can help here?~~
 
 Solution to PSS, the reason a file is downloaded in a weird name and double the size, it`s because the Swagger2-UI, if we go through this by normal http request, the file will be downloaded in right name and proper size
 
@@ -46,7 +46,11 @@ Solution to PSS, the reason a file is downloaded in a weird name and double the 
 
 Converting file into the specific format requires a third-party module written in C, is ffmpeg.
 
-In order to call ffmpeg, JNI(Java Native Interface) is required. Therefore,  calling ffmpeg at command line, which can be achieved by running java`s Runtime class.  That is the main idea of this little feature
+Calling ffmpeg at command line, which can be achieved by running java`s Runtime class.  That is the main idea of this little feature
+
+it basically used List to save command line arguments, and run the command in ProcessBuilder. While processing, it reads from the process and print out the information. It`s the same as running ffmpeg command in the command line
+
+Frankly speaking, this is the easiest one.
 
 
 

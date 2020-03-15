@@ -30,6 +30,17 @@ public interface FileServiceImp {
      * @param fileName file name
      * @return true for convert successfully, false for failed to convert the file
      */
-    public boolean convert(String fileName, String form);
+    public String convert(String fileName, String form);
+
+
+    /**
+     * pick a clip from the video and convert
+     * @param fileName file`name
+     * @param start the time when the pick begins, format requires HH:MM:SS
+     * @param end the time when the pick ends, format requires HH:MM:SS
+     * @param form the form converts to
+     * @return boolean
+     */
+    public boolean pickAndConvert(String fileName, String start, String end, String form);
 
 }

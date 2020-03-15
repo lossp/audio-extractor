@@ -28,7 +28,7 @@ public class FileUploader {
             String filePath = new DateTime().toString("yyyy/MM/dd");
             System.out.println(ftpEntity.toString());
             FileService fileService = new FileService("ftp", ftpEntity.getHost(), ftpEntity.getPort(), ftpEntity.getUsername(), ftpEntity.getPassword(),
-                    ftpEntity.getBaseUrl(), filePath, fileName);
+                    ftpEntity.getBaseUrl(), filePath, fileName, "");
             return fileService.upload(multipartFile.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();

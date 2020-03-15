@@ -3,8 +3,10 @@ package main.com.controller;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import main.com.domain.FileConvertor;
 import main.com.domain.FileDownloader;
 import main.com.domain.FileUploader;
+import main.com.entity.ConvertEntity;
 import main.com.entity.DownloadEntity;
 import main.com.entity.FtpEntity;
 import org.apache.log4j.Logger;
@@ -26,6 +28,8 @@ public class FileController {
     FtpEntity ftpEntity;
     @Autowired
     DownloadEntity downloadEntity;
+    @Autowired
+    ConvertEntity convertEntity;
 
     /**
      * here is the controller of uploading
@@ -41,12 +45,18 @@ public class FileController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/download")
-
     @ApiOperation(value = "File download", produces="application/octet-stream")
     public String download(@RequestParam(name = "fileName") String fileName, HttpServletResponse response) {
 
-        log.info("FileController.download method Entry, file is ready to download");
+        log.info("FileController.download method Entry, file is ready to be downloaded");
         return FileDownloader.download(fileName, response, downloadEntity);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/convert")
+    @ApiOperation(value = "File converting")
+    public boolean convert(@RequestParam(name = "fileName") String fileName, @RequestParam(name = "format") String format) {
+        log.info("FileController.convert method Entry, file is ready to be converted");
+        return FileConvertor.convert(fileName, format, convertEntity);
     }
 
 }

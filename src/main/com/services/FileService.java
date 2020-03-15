@@ -1,7 +1,9 @@
 package main.com.services;
 
 import main.com.constants.VideoForm;
+import main.com.entity.ConvertEntity;
 import main.com.intefaces.FileServiceImp;
+import main.com.uitls.FileNameTool;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -9,10 +11,12 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileService implements FileServiceImp {
     final Logger log = Logger.getLogger(FileService.class);
-    private static final String VIDEO_FILE_NAME_PATTERN = "([^\\\\s]+(\\\\.(?i)(mkv|avi|3gp|mp4|mpeg|flv|mov|webm|rmvb|rm))$)";
+    private static final String VIDEO_FILE_NAME_PATTERN = "([^\\s]+(\\.(?i)(mkv|avi|3gp|mp4|mpeg|flv|mov|webm|rmvb|rm))$)";
     /**
      * The essential params for FileService, it basically defines the specific actions of upload
      * first opening a ftp client, then checking the directory, saving the file at the end. Throw Exceptions if any of it occurs
@@ -26,7 +30,8 @@ public class FileService implements FileServiceImp {
     private final String basePath;
     private final String filePath;
     private final String fileName;
-    public FileService(String protocol, String host, int port, String username, String password, String basePath, String filePath, String fileName) {
+    private final String ffmpegPath;
+    public FileService(String protocol, String host, int port, String username, String password, String basePath, String filePath, String fileName, String ffmpegPath) {
         this.protocol = protocol;
         this.host = host;
         this.port = port;
@@ -35,10 +40,14 @@ public class FileService implements FileServiceImp {
         this.basePath = basePath;
         this.filePath = filePath;
         this.fileName = fileName;
+        this.ffmpegPath = ffmpegPath;
     }
 
     public FileService(String fileName, String basePath) {
-        this("http", "", 0, "", "", basePath, "", fileName);
+        this("http", "", 0, "", "", basePath, "", fileName, "");
+    }
+    public FileService(String fileName, String basePath, String ffmpegPath) {
+        this("http", "", 0, "", "", basePath, "", fileName, ffmpegPath);
     }
 
     /**
@@ -154,10 +163,10 @@ public class FileService implements FileServiceImp {
     /**
      * convert the file into specific form, the main idea of this is that use ffmpeg to convert the video
      * @param fileName the file needs to convert
-     * @param form
+     * @param format the file new format
      * @return
      */
-    public boolean convert(String fileName, String form) {
+    public String convert(String fileName, String format) {
         log.info("FileService.convert method entry");
         // TODO first of, check the file is video or not
 
@@ -166,10 +175,39 @@ public class FileService implements FileServiceImp {
 
         // check the file format is allowed
         String copiedFileName = fileName;
-        String fileFormat = copiedFileName.split(".")[1];
+        String[] params = copiedFileName.split("\\.");
+        String fileFormat = params[1];
         if (!VideoForm.contains(fileFormat)) throw new IllegalArgumentException("file format is not supported, sorry");
+        String outputFileName = FileNameTool.swapFileNameFormat(fileName, format);
+        final List<String> command = new ArrayList<>();
+        command.add(ffmpegPath);
+        command.add("-i");
+        command.add(basePath + "/" + fileName);
+        command.add(basePath + "/" + outputFileName);
+        for (String co:command) {
+            System.out.println(co);
+        }
+        ProcessBuilder builder = new ProcessBuilder(command);
+        try {
+            Process process = builder.start();
+            InputStream errorStream = process.getErrorStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(errorStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String line = "";
+            while((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
+            }
+            bufferedReader.close();
+            inputStreamReader.close();
+            errorStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
+    public boolean pickAndConvert(String fileName, String start, String end, String form) {
         return true;
     }
 }
